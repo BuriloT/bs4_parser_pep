@@ -8,6 +8,10 @@ PEP_URL = 'https://peps.python.org/'
 BASE_DIR = Path(__file__).parent
 DATETIME_FORMAT = '%Y-%m-%d_%H-%M-%S'
 
+WHATS_NEW_TABLE = [('Ссылка на статью', 'Заголовок', 'Редактор, Автор')]
+LATEST_VERSIONS_TABLE = [('Ссылка на документацию', 'Версия', 'Статус')]
+PEP_TABLE = [('Статус', 'Количество')]
+
 EXPECTED_STATUS = {
     'A': ['Active', 'Accepted'],
     'D': ['Deferred'],

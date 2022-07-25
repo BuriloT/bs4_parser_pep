@@ -10,14 +10,15 @@ from tqdm import tqdm
 from outputs import control_output
 from utils import get_response, find_tag
 from configs import configure_argument_parser, configure_logging
-from constants import BASE_DIR, MAIN_DOC_URL, PEP_URL, EXPECTED_STATUS
+from constants import (BASE_DIR, MAIN_DOC_URL, PEP_URL, EXPECTED_STATUS,
+                       WHATS_NEW_TABLE, LATEST_VERSIONS_TABLE,  PEP_TABLE)
 
 
 def whats_new(session):
     whats_new_url = urljoin(MAIN_DOC_URL, 'whatsnew/')
     response = get_response(session, whats_new_url)
     if response is None:
-        return
+        return None
 
     soup = BeautifulSoup(response.text, features='lxml')
 
@@ -30,7 +31,7 @@ def whats_new(session):
 
     sections_by_python = div_with_url.find_all('li', attrs='toctree-l1')
 
-    results = [('Ссылка на статью', 'Заголовок', 'Редактор, Автор')]
+    results = WHATS_NEW_TABLE
     for section in tqdm(sections_by_python):
         version_a_tag = find_tag(section, 'a')
         href = version_a_tag['href']
@@ -53,7 +54,7 @@ def whats_new(session):
 def latest_versions(session):
     response = get_response(session, MAIN_DOC_URL)
     if response is None:
-        return
+        return None
 
     soup = BeautifulSoup(response.text, 'lxml')
 
@@ -65,10 +66,8 @@ def latest_versions(session):
         if 'All versions' in ul.text:
             a_tags = ul.find_all('a')
             break
-        else:
-            raise Exception('Ничего не нашлось')
 
-    results = [('Ссылка на документацию', 'Версия', 'Статус')]
+    results = LATEST_VERSIONS_TABLE
 
     pattern = r'Python (?P<version>\d\.\d+) \((?P<status>.*)\)'
 
@@ -89,7 +88,7 @@ def download(session):
     downloads_url = urljoin(MAIN_DOC_URL, 'download.html')
     response = get_response(session, downloads_url)
     if response is None:
-        return
+        return None
 
     soup = BeautifulSoup(response.text, 'lxml')
 
@@ -121,7 +120,7 @@ def download(session):
 def pep(session):
     response = get_response(session, PEP_URL)
     if response is None:
-        return
+        return None
 
     soup = BeautifulSoup(response.text, 'lxml')
 
@@ -132,7 +131,7 @@ def pep(session):
     status_sum = {}
     total_peps = 0
 
-    results = [('Статус', 'Количество')]
+    results = PEP_TABLE
 
     for tr_tag in tr_tags:
         td_tag = find_tag(tr_tag, 'td')
@@ -143,7 +142,7 @@ def pep(session):
         link = urljoin(PEP_URL, href)
         response = get_response(session, link)
         if response is None:
-            return
+            return None
 
         soup = BeautifulSoup(response.text, 'lxml')
 
